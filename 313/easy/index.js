@@ -25,6 +25,9 @@ stdin.on('end', function() {
 function compute(input){
     var hash = {};
     for( var i=0; i<input.length; i++ ){
+        if( input[i] === 0 ){
+            return true;
+        }
         var key = Math.abs(input[i]);
         hash[key] = (hash[key]||0) + 1;
         if( hash[key] == 2 ){
