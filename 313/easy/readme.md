@@ -53,3 +53,8 @@ The following inputs should return true:
 [-85029, -84549, -82646, -80493, -73373, -57478, -56711, -42456, -38923, -29277, -3685, -3164, 26863, 29890, 37187, 46607, 69300, 84808]
 [-87565, -71009, -49312, -47554, -27197, 905, 2839, 8657, 14622, 32217, 35567, 38470, 46885, 59236, 64704, 82
 ```
+
+# Solution Notes
+I'm solving the bonus with inspiration from this post: https://www.reddit.com/r/dailyprogrammer/comments/68oda5/20170501_challenge_313_easy_subset_sum/dh1408q/. 
+I originally tried to do a tree/recursive solution, and that was truly disgusting. 
+The iterative approach works nicely and doesn't grow in complexity as fast. Oops.
