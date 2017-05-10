@@ -103,33 +103,30 @@ function trimOutliers(input){
     });
 }
 
-function computeTree(input){
-    //console.log('After Trim: ',input);
-    return computeSubTree(input);
-}
-
-function computeSubTree(input, downSum){
-    downSum = (downSum||0)+input[0];
-    if( downSum == 0 ){
-        return true;
-    }
-    var upSum = input[0];
-    for( var i=1; i<input.length; i++ ){
-        var childResult = (function (input, downSum){
-            var inputClone = input.slice(1);
-            var front = inputClone.splice(i-1,1);
-            return computeSubTree(front.concat(inputClone), downSum);
-        })(input, downSum);
-        
-        if( childResult === true ){
+/*
+* Improvements: Pass sums by reference, trim as we recurse back up
+* Assumptions: Simple check and trim have already been performed
+*/
+function computeTree(input, sums){
+    //next value is input[0]
+    //add to all the sums and see if any are zero
+    var nextSums = (sums || []).slice(0);
+    var i;
+    for( i=0; i<nextSums.length; i++ ){
+        nextSums[i] += input[0];
+        if( nextSums[i] === 0 ){
             return true;
         }
-        else{
-            upSum += childResult;
+    }
+    //add the new value to the sums
+    nextSums.push(input[0]);
+    //recurse onto all other possible children
+    for( i=1; i<input.length; i++ ){
+        var nextInput = input.slice(1);
+        nextInput.splice(0,1,nextInput.splice(i-1,1)[0]);
+        if( computeTree(nextInput, nextSums) ){
+            return true;
         }
     }
-    if( upSum === 0 ){
-        return true;
-    }
-    return upSum;
+    return false;
 }
