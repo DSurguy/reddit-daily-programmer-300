@@ -1,39 +1,48 @@
+const readline = require('readline');
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+  terminal: false
+});
+
+const STATE = {
+    SIMPLE: {},
+    TRIM: {},
+    COMPLEX: {}
+};
+
+STATE.SIMPLE.toString = function (){return 'simple';};
+STATE.TRIM.toString = function (){return 'trim';};
+STATE.COMPLEX.toString = function (){return 'complex';};
+
+var globalCount = 0,
+    globalState = STATE.SIMPLE,
+    lines = [];
+
 if( process.argv.indexOf('-i') !== -1 ){
-    
-    var stdin = process.openStdin();
     
     var data = "";
     
-    stdin.on('data', function(chunk) {
-        var lines = chunk.toString().split(/[\r\n]+/g);
-        
-        if( lines.length == 1 ){
-            data += chunk;
+    rl.on('line', function(line) {
+        if( line[0] !== '#' ){
+            lines.push(line);
         }
-        else{
-            for( var i=0; i<lines.length-1; i++ ){
-                data += lines[i];
-                if( data[0] !== '#' ){
-                    process.stdout.write(data+' -> '+compute(JSON.parse(data)).toString()+'\n');
-                }
-                data = '';
-            }
-            data += lines.slice(-1)[0];
-        }
-    });
-    
-    stdin.on('end', function() {
-        if( data[0] !== '#' ){
-            process.stdout.write(data+' -> '+compute(JSON.parse(data)).toString()+'\n');
-        }
+    }).on('close', function (){
+        lines.forEach(function (line){
+            var result = compute(JSON.parse(line));
+            console.log(`${line} -> ${result.toString()} \n  | after ${globalCount} function calls in state: ${globalState.toString()}.`);
+        });
     });
 }
 else{
-    var data = '[-97162, -95761, -94672, -87254, -57207, -22163, -20207, -1753, 11646, 13652, 14572, 30580, 52502, 64282, 74896, 83730, 89889, 92200]';
-    process.stdout.write(data+' -> '+compute(JSON.parse(data)).toString()+'\n');
+    var data = '[-3, 1, 2]';
+    var result = compute(JSON.parse(data));
+    console.log(`${data} -> ${result.toString()} \n  | after ${globalCount} function calls in state: ${globalState.toString()}.`);
 }
 
 function compute(input){
+    globalCount = 0;
     if( computeSimple(input) ){
         return true;
     }
@@ -44,6 +53,7 @@ function compute(input){
 }
 
 function computeSimple(input){
+    globalState = STATE.SIMPLE;
     var hash = {
         pos: {},
         neg: {}
@@ -75,6 +85,7 @@ function computeSimple(input){
 }
 
 function trimOutliers(input){
+    globalState = STATE.TRIM;
     var totals = input.reduce(function (o, val){
         if( val < 0 ){ o.neg -= val; }
         else{ o.pos -= val; }
@@ -103,11 +114,16 @@ function trimOutliers(input){
     });
 }
 
-/*
-* Improvements: Pass sums by reference, trim as we recurse back up
+/**
+* Improvements: 
+*  - Pass sums by reference, trim as we recurse back up
+*  - Pass input as reference as well?
+* 
 * Assumptions: Simple check and trim have already been performed
 */
 function computeTree(input, sums){
+    globalState = STATE.COMPLEX;
+    globalCount++;
     //next value is input[0]
     //add to all the sums and see if any are zero
     var nextSums = (sums || []).slice(0);
@@ -123,7 +139,8 @@ function computeTree(input, sums){
     //recurse onto all other possible children
     for( i=1; i<input.length; i++ ){
         var nextInput = input.slice(1);
-        nextInput.splice(0,1,nextInput.splice(i-1,1)[0]);
+        //move the actual next child to the front of the array
+        nextInput.splice(0,0,nextInput.splice(i-1,1)[0]);
         if( computeTree(nextInput, nextSums) ){
             return true;
         }
