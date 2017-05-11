@@ -1,0 +1,26 @@
+{
+  "name": "reddit-daily-programmer-300-to-399",
+  "version": "1.1.0",
+  "description": "Solutions to challenges posted on https://reddit.com/r/dailyprogrammer. Solutions are programmed in nodejs where possible, using a minimum of external modules as much as possible.",
+  "main": "",
+  "engines": {
+    "node": ">=6"
+  },
+  "scripts": {
+    "clean": "node scripts/cleanup.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DSurguy/reddit-daily-programmer-300.git"
+  },
+  "author": "Surguy.Derek@gmail.com",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DSurguy/reddit-daily-programmer-300/issues"
+  },
+  "homepage": "https://github.com/DSurguy/reddit-daily-programmer-300#readme",
+  "dependencies": {
+    "colors": "^1.1.2",
+    "rimraf": "^2.6.1"
+  }
+}
