@@ -1,3 +1,5 @@
+const EOL = require('os').EOL;
+
 function PgmImage(type, width, height, max, data){
     this.type = type;
     this.width = parseInt(width);
@@ -12,6 +14,7 @@ PgmImage.prototype.process = function (commands){
         this[properCommands[i]]();
     }
 };
+
 /**
  * Rotate image 90 degrees clockwise
  * [1,2,3]    [7,4,1]
@@ -22,12 +25,6 @@ PgmImage.prototype.process = function (commands){
  * [c,d] -> [e,c,a]
  * [e,f]    [f,d,b]
  * 
- * 0->2 | (0,0)->(0,2)
- * 1->5 | (0,1)->(1,2)
- * 2->1 | (1,0)->()
- * 3->4 | (1,1)
- * 4->0 | (2,0)
- * 5->3 | (2,1)
  **/
 PgmImage.prototype.r = function (){
     var newData = [];
@@ -37,6 +34,34 @@ PgmImage.prototype.r = function (){
         }
     }
     this.data = newData;
+    
+    //width and height swap
+    var preWidth = this.width;
+    this.width = this.height;
+    this.height = preWidth;
+};
+
+/**
+ * Rotate image 90 degrees counter-clockwise
+ * [3,6,9]    [1,2,3]
+ * [2,5,8] <- [4,5,6]
+ * [1,4,7]    [7,8,9]
+ * 
+ *            [a,b]
+ * [b,d,f] <- [c,d]
+ * [a,c,e]    [e,f]
+ * 
+ **/
+PgmImage.prototype.l = function (){
+    var newData = [];
+    for( var row=0; row<this.height; row++ ){
+        for( var col=0; col<this.width; col++ ){
+            newData[(this.width-1-col)*this.height + row] = this.data[col+row*this.width];
+        }
+    }
+    console.log(this.data);
+    this.data = newData;
+    console.log(this.data);
     
     //width and height swap
     var preWidth = this.width;
@@ -71,3 +96,5 @@ PgmImage.prototype.out = function (outStream, options){
         }
     });
 };
+
+module.exports = PgmImage;
