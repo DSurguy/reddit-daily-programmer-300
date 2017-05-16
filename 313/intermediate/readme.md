@@ -87,3 +87,9 @@ Also handle [plain PPM images](http://netpbm.sourceforge.net/doc/ppm.html#plainp
  - [earth.ppm](https://raw.githubusercontent.com/cosmologicon/problems/master/pgm/earth.ppm)
 
 Ideally your program will handle both PGM and PPM in the same code path, with only small differences for the two formats, rather than two completely separate code paths.
+
+# Solution Notes
+
+## Base Challenge
+
+I've opted not to do in-place replacement for now, I'm not sure of the performance differences off the top of my head. I'll probably implement both once I have one working and compare for very large datasets.
