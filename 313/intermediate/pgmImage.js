@@ -59,14 +59,29 @@ PgmImage.prototype.l = function (){
             newData[(this.width-1-col)*this.height + row] = this.data[col+row*this.width];
         }
     }
-    console.log(this.data);
     this.data = newData;
-    console.log(this.data);
     
     //width and height swap
     var preWidth = this.width;
     this.width = this.height;
     this.height = preWidth;
+};
+
+/** Flip Horizontal
+ *  
+ *  [1,2,3]    [3,2,1]
+ *  [4,5,6] -> [6,5,4]
+ *  [7,8,9]    [9,8,7]
+ * 
+ */
+PgmImage.prototype.h = function (){
+    var newData = [];
+    for( var row=0; row<this.height; row++ ){
+        for( var col=0; col<this.width; col++ ){
+            newData[row*this.width+(this.width-1-col)] = this.data[row*this.width+col];
+        }
+    }
+    this.data = newData;
 };
 
 PgmImage.prototype.out = function (outStream, options){
@@ -75,22 +90,22 @@ PgmImage.prototype.out = function (outStream, options){
     };
     return new Promise((resolve, reject) => {
         try{
-            outStream.write(`${this.type} ${this.width} ${this.height} ${this.max}${EOL}`);
+            var outStr = `${this.type} ${this.width} ${this.height} ${this.max}${EOL}`;
             for( var i=0; i<this.data.length; ){
                 if( opts.group === 'w' ){
-                    outStream.write(this.data.slice(i,i+this.width).join(' ')+EOL);
+                    outStr += this.data.slice(i,i+this.width).join(' ')+EOL;
                     i+= this.width;
                 }
                 else if( opts.group === 'h' ){
-                    outStream.write(this.data.slice(i,i+this.height).join(' ')+EOL);
+                    outStr += this.data.slice(i,i+this.height).join(' ')+EOL;
                     i+= this.height;
                 }
                 else{
-                    outStream.write(this.data[i]+EOL);
+                    outStr += this.data[i]+EOL;
                     i++;
                 }
             }
-            outStream.on('finish', resolve);
+            outStream.write(outStr, resolve);
         } catch (e){
             reject(e);
         }
