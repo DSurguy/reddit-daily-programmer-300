@@ -84,6 +84,23 @@ PgmImage.prototype.h = function (){
     this.data = newData;
 };
 
+/** Flip Vertical
+ *  
+ *  [1,2,3]    [7,8,9]
+ *  [4,5,6] -> [4,5,6]
+ *  [7,8,9]    [1,2,3]
+ * 
+ */
+PgmImage.prototype.v = function (){
+    var newData = [];
+    for( var row=0; row<this.height; row++ ){
+        for( var col=0; col<this.width; col++ ){
+            newData[(this.height-1-row)*this.width + col] = this.data[row*this.width+col];
+        }
+    }
+    this.data = newData;
+};
+
 PgmImage.prototype.out = function (outStream, options){
     var opts = options || {
         group: false

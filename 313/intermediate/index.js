@@ -19,7 +19,7 @@ io.on('line', function (line){
         group: 'w'
     })
     .then(function (){
-        image.h();
+        image.v();
         image.out(process.stdout, {
             group: 'w'
         })
